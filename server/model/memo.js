@@ -71,7 +71,7 @@ _.pUpdate = function(memoId, body) {
     return new Promise(function(resolve, reject) {
       if (body.title) memo.title = body.title;
       if (body.body) memo.body = body.body;
-      if (body.editor) memo.body = body.editor;
+      if (body.editor) memo.editor = body.editor;
       memo.save(function(err, updatedMemo) {
         if (err) return reject(Error.mongoose(500, err));
         if (!updatedMemo) return reject(Error.invalidParameter);
