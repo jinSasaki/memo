@@ -29,6 +29,17 @@ $ npm start
 
 in local: `localhost:3000/api/v1`
 
+## Request Header
+
+Header          | Description                                   | Example                                | Requirement
+--------------- | --------------------------------------------- | -------------------------------------- | -----------
+`X-App-Token`   | Accept only authenticated application access. | `4F4A4A9D-D116-4DF3-8FB6-48F792F88EC8` | required
+`X-Platform`    | Platform.                                     | `ios`                                  | optional
+`X-App-Version` | Application Version.                          | `1.0.0`                                | optional
+
+### `X-App-Token`
+- jinSasaki/Memo/ios: `F6FAC3AE-0A00-4724-982C-0B0B5F0C00FA`
+
 ## Error Response
 - error (Object)
   - code (int)
@@ -36,7 +47,7 @@ in local: `localhost:3000/api/v1`
 
 **Status Code**
 
-Status Code | description
+Status Code | Description
 ----------- | -----------------------------------------------------------------------------------------------------------------
 400         | Bad Request. May be request has invalid parameters or something wrong.
 401         | Unauthorized.
