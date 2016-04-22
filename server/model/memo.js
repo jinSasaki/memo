@@ -103,16 +103,12 @@ _.pDelete = function(memoId) {
 
 _.pipeSuccessRender = function(req, res, memo) {
   console.log('Memo.pipeSuccessRender\n');
-  return res.ok(200, {
-    memo: MemoHelper.formatMemo(memo)
-  });
+  return res.ok(200, MemoHelper.formatMemo(memo));
 };
 
 _.pipeCreateRender = function(req, res, memo) {
   console.log('Memo.pipeCreatedRender\n');
-  return res.ok(201, {
-    memo: MemoHelper.formatMemo(memo)
-  });
+  return res.ok(201, MemoHelper.formatMemo(memo));
 };
 
 _.pipeDeleteRender = function(req, res, memo) {

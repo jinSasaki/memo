@@ -3,18 +3,12 @@ var express = require('express'),
 	memoRouter = require('./v1/memo.js'),
 	Error = require('../model/error.js');
 
-express.response.ok = function(code, result) {
-	return this.json({
-		status: code,
-		result: result || {}
-	});
+express.response.ok = function(code, json) {
+	return this.status(code).json(json || {});
 };
 
-express.response.ng = function(code, result) {
-	return this.json({
-		status: code,
-		result: result || {}
-	});
+express.response.ng = function(code, json) {
+	return this.status(code).json(json || {});
 };
 
 router.use(function(req, res, next) {

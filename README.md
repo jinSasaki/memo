@@ -13,13 +13,13 @@ $ npm install
 ## Start
 Start mongoDB
 
-```
+```sh
 $ mongod --fork --logpath ./log/mongo.log --port 27017 --dbpath ./db/mongo
 ```
 
 Start server
 
-```
+```sh
 $ npm start
 ```
 
@@ -28,6 +28,32 @@ $ npm start
 `/api/v1`
 
 in local: `localhost:3000/api/v1`
+
+## Error Response
+- error (Object)
+  - code (int)
+  - message (string)
+
+**Status Code**
+
+Status Code | description
+----------- | -----------------------------------------------------------------------------------------------------------------
+400         | Bad Request. May be request has invalid parameters or something wrong.
+401         | Unauthorized.
+404         | Not Found. URL is not found. However return 400 if the request to PUT and DELETE has not found memo by `:memoId`.
+409         | Conflicts data.
+
+**Response**
+
+```json
+// 400
+{
+  "error": {
+    "code": 400,
+    "message": "INVALID_PARAMETER"
+  }
+}
+```
 
 ## Route
 - `GET /memo`
@@ -48,28 +74,26 @@ GET /api/v1/memo
 **Response**
 
 ```json
+// 200
 {
-  "status": 200,
-  "result": {
-    "memos": [
-      {
-        "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
-        "title": "test post",
-        "body": "this is a content for memo.\n\n Thanks.",
-        "author": "Sasakky",
-        "editor": "Sasakky",
-        "created": 1461216860,
-        "updated": 1461216860
-      }
-    ]
-  }
+  "memos": [
+    {
+      "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
+      "title": "test post",
+      "body": "this is a content for memo.\n\n Thanks.",
+      "author": "Sasakky",
+      "editor": "Sasakky",
+      "created": 1461216860,
+      "updated": 1461216860
+    }
+  ]
 }
 ```
 
 ### `POST /memo`
 Create a new memo.
 
-**Body(JSON)**
+**Request Body(JSON)**
 - title (string)
 - body (string)
 - author (string)
@@ -94,19 +118,15 @@ Body
 **Response**
 
 ```json
+// 201
 {
-  "status": 201,
-  "result": {
-    "memo": {
-      "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
-      "title": "test post",
-      "body": "this is a content for memo.\n\n Thanks.",
-      "author": "Sasakky",
-      "editor": "Sasakky",
-      "created": 1461216860,
-      "updated": 1461216860
-    }
-  }
+  "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
+  "title": "test post",
+  "body": "this is a content for memo.\n\n Thanks.",
+  "author": "Sasakky",
+  "editor": "Sasakky",
+  "created": 1461216860,
+  "updated": 1461216860
 }
 ```
 
@@ -128,6 +148,7 @@ POST /api/v1/memo/7f986bea-5997-4f2d-90cb-e1f5da1e29e0
 Body
 
 ```json
+// 200
 {
     "title": "test post is edited",
     "body": "this is a content for memo.\n\n Thanks.",
@@ -139,18 +160,13 @@ Body
 
 ```json
 {
-  "status": 200,
-  "result": {
-    "memo": {
-      "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
-      "title": "test post is edited",
-      "body": "this is a content for memo.\n\n Thanks.",
-      "author": "Sasakky",
-      "editor": "Jin Sasaki",
-      "created": 1461216860,
-      "updated": 1461216890
-    }
-  }
+  "id": "7f986bea-5997-4f2d-90cb-e1f5da1e29e0",
+  "title": "test post is edited",
+  "body": "this is a content for memo.\n\n Thanks.",
+  "author": "Sasakky",
+  "editor": "Jin Sasaki",
+  "created": 1461216860,
+  "updated": 1461216890
 }
 ```
 
@@ -167,9 +183,6 @@ DELETE /api/v1/memo/7f986bea-5997-4f2d-90cb-e1f5da1e29e0
 **Response**
 
 ```json
-{
-  "status": 204,
-  "result": {}
-  }
-}
+// 204
+{}
 ```
