@@ -26,7 +26,7 @@ extension API {
             return "memo"
         }
         
-        var parameters: [String : AnyObject] {
+        var parameters: AnyObject? {
             return [
                 "title": self.title,
                 "body": self.body,
@@ -35,7 +35,7 @@ extension API {
         }
     }
     
-    static func createMemo(title title: String, body: String, author: String, handler: (Result<Memo, APIError>) -> Void) {
+    static func createMemo(title title: String, body: String, author: String, handler: (Result<Memo, SessionTaskError>) -> Void) {
         let request = CreateMemoRequest(title: title, body: body, author: author)
         Session.sendRequest(request, handler: handler)
     }

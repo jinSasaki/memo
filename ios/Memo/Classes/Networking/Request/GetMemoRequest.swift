@@ -23,7 +23,7 @@ extension API {
         }
     }
     
-    static func getMemos(handler handler: (Result<Memos, APIError>) -> Void) {
+    static func getMemos(handler handler: (Result<Memos, SessionTaskError>) -> Void) {
         let request = API.GetMemosRequest()
         Session.sendRequest(request, handler: handler)
     }

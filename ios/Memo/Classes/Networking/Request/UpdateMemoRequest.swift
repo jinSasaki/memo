@@ -36,7 +36,7 @@ extension API {
         }
     }
     
-    static func updateMemo(memo memo: Memo, handler: (Result<Memo, APIError>) -> Void) {
+    static func updateMemo(memo memo: Memo, handler: (Result<Memo, SessionTaskError>) -> Void) {
         let request = API.UpdateMemoRequest(memo: memo)
         Session.sendRequest(request, handler: handler)
     }

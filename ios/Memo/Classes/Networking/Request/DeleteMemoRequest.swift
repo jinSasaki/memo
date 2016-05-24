@@ -29,7 +29,7 @@ extension API {
         
     }
     
-    static func deleteMemo(memoId memoId: String, handler: (Result<EmptyResponse, APIError>) -> Void) {
+    static func deleteMemo(memoId memoId: String, handler: (Result<EmptyResponse, SessionTaskError>) -> Void) {
         let request = API.DeleteMemoRequest(memoId: memoId)
         Session.sendRequest(request, handler: handler)
     }

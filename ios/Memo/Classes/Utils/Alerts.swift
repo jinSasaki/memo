@@ -15,8 +15,15 @@ class Alerts {
         switch error {
         case let error as NSError:
             AlertBar.showError(error)
-        case let error as APIError:
-            AlertBar.show(.Error, message: "\(error)")
+        case let error as SessionTaskError:
+            switch error {
+            case .ConnectionError(let e):
+                AlertBar.show(.Error, message: "Connecton Error: \(e)")
+            case .RequestError(let e):
+                AlertBar.show(.Error, message: "Request Error: \(e)")
+            case .ResponseError(let e):
+                AlertBar.show(.Error, message: "Response Error: \(e)")
+            }
         default:
             print(error)
         }

@@ -22,7 +22,7 @@ extension MemoRequestType {
         return ""
     }
     
-    var HTTPHeaderFields: [String : String] {
+    var headerFields: [String : String] {
         return [
             "X-App-Token": "F6FAC3AE-0A00-4724-982C-0B0B5F0C00FA",
             "X-App-Version": "1.0.0",
@@ -32,7 +32,7 @@ extension MemoRequestType {
 }
 
 extension MemoRequestType where Response: Decodable {
-    func responseFromObject(object: AnyObject, URLResponse: NSHTTPURLResponse) -> Response? {
-        return try? decodeValue(object)
+    func responseFromObject(object: AnyObject, URLResponse: NSHTTPURLResponse) throws -> Self.Response {
+        return try decodeValue(object)
     }
 }
