@@ -9,6 +9,7 @@
 import Foundation
 import APIKit
 import Result
+import RxSwift
 
 extension API {
     struct GetMemosRequest: MemoRequestType {
@@ -23,8 +24,8 @@ extension API {
         }
     }
     
-    static func getMemos(handler handler: (Result<Memos, SessionTaskError>) -> Void) {
+    static func getMemos() -> Observable<Memos> {
         let request = API.GetMemosRequest()
-        Session.sendRequest(request, handler: handler)
+        return Session.rx_response(request)
     }
 }

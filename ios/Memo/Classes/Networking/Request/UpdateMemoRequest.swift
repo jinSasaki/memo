@@ -9,6 +9,7 @@
 import Foundation
 import APIKit
 import Result
+import RxSwift
 
 extension API {
     struct UpdateMemoRequest: MemoRequestType {
@@ -36,9 +37,9 @@ extension API {
         }
     }
     
-    static func updateMemo(memo memo: Memo, handler: (Result<Memo, SessionTaskError>) -> Void) {
+    static func updateMemo(memo memo: Memo) -> Observable<Memo> {
         let request = API.UpdateMemoRequest(memo: memo)
-        Session.sendRequest(request, handler: handler)
+        return Session.rx_response(request)
     }
 
 }

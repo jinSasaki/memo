@@ -9,6 +9,7 @@
 import Foundation
 import APIKit
 import Result
+import RxSwift
 
 extension API {
     struct CreateMemoRequest: MemoRequestType {
@@ -35,8 +36,8 @@ extension API {
         }
     }
     
-    static func createMemo(title title: String, body: String, author: String, handler: (Result<Memo, SessionTaskError>) -> Void) {
+    static func createMemo(title title: String, body: String, author: String) -> Observable<Memo> {
         let request = CreateMemoRequest(title: title, body: body, author: author)
-        Session.sendRequest(request, handler: handler)
+        return Session.rx_response(request)
     }
 }

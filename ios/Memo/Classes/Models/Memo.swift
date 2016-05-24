@@ -10,13 +10,14 @@ import Foundation
 import Himotoki
 
 struct Memo {
-    var id: String
-    var title: String
-    var body: String
-    var author: String
-    var editor: String
-    var created: Int
-    var updated: Int
+    var id: String = ""
+    var title: String = ""
+    var body: String = ""
+    var author: String = ""
+    var editor: String = ""
+    var created: Int = 0
+    var updated: Int = 0
+    
 }
 
 extension Memo: Decodable {

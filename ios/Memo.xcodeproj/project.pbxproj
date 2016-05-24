@@ -25,6 +25,7 @@
 		93ED77511CCA076A0045D3FD /* MemoDetailViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93ED77501CCA076A0045D3FD /* MemoDetailViewController.storyboard */; };
 		93ED77571CCA14D50045D3FD /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93ED77541CCA14D50045D3FD /* API.swift */; };
 		93ED77581CCA14D50045D3FD /* MemoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93ED77561CCA14D50045D3FD /* MemoRequest.swift */; };
+		93F081351CF425DF00AAAED9 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F081341CF425DF00AAAED9 /* Session.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		93ED77501CCA076A0045D3FD /* MemoDetailViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MemoDetailViewController.storyboard; sourceTree = "<group>"; };
 		93ED77541CCA14D50045D3FD /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		93ED77561CCA14D50045D3FD /* MemoRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoRequest.swift; sourceTree = "<group>"; };
+		93F081341CF425DF00AAAED9 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		F9FE4F9DF0542499B1834134 /* Pods_Memo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Memo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -155,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				93ED77541CCA14D50045D3FD /* API.swift */,
+				93F081341CF425DF00AAAED9 /* Session.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93F081351CF425DF00AAAED9 /* Session.swift in Sources */,
 				938055E31CC8B2AB0053CA1F /* AppDelegate.swift in Sources */,
 				931A00FC1CCA939A00418098 /* DeleteMemoRequest.swift in Sources */,
 				93ED774F1CC9FF140045D3FD /* MemoDetailViewController.swift in Sources */,

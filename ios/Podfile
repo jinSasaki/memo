@@ -5,5 +5,7 @@ target 'Memo' do
   pod 'AlertBar'
   pod 'Himotoki'
   pod 'APIKit'
+  pod 'RxSwift'
+  pod 'RxCocoa'
 end
 

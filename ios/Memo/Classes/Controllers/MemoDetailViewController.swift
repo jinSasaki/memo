@@ -7,6 +7,36 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+
+class MemoViewModel {
+    let original: Memo?
+    var title: Variable<String>
+    var name: Variable<String>
+    var body: Variable<String>
+    var isNew: Bool {
+        return self.original == nil
+    }
+    
+    init(memo: Memo?) {
+        self.original = memo
+        self.title = Variable<String>(memo?.title ?? "")
+        self.name = Variable<String>("")
+        self.body = Variable<String>(memo?.body ?? "")
+    }
+    
+    func memo() -> Memo {
+        var memo = self.original ?? Memo()
+        memo.title = self.title.value
+        memo.body = self.body.value
+        if self.isNew {
+            memo.author = self.name.value
+        }
+        memo.editor = self.name.value
+        return memo
+    }
+}
 
 class MemoDetailViewController: UIViewController {
     
@@ -14,65 +44,119 @@ class MemoDetailViewController: UIViewController {
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var bodyTextView: UITextView!
     
-    var memo: Memo?
-    private var canBack: Bool = true
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     
-    @IBAction func didTapDoneButton(sender: AnyObject) {
-        if var memo = self.memo {
-            // Update
-            memo.title = self.titleTextField.text ?? memo.title
-            memo.body = self.bodyTextView.text
-            memo.editor = self.nameTextField.text ?? memo.editor
-            API.updateMemo(memo: memo, handler: { (result) in
-                switch result {
-                case .Success(let memo):
-                    Alerts.success("Update succeeded: " + memo.title)
-                    self.canBack = true
-                    self.dismiss()
-                case .Failure(let error):
-                    Alerts.handleError(error)
-                }
-            })
-        } else {
-            // Create
-            API.createMemo(
-                title: self.titleTextField.text ?? "",
-                body: self.bodyTextView.text,
-                author: self.nameTextField.text ?? "",
-                handler: { (result) in
-                    switch result {
-                    case .Success(let memo):
-                        Alerts.success("Create succeeded: " + memo.title)
-                        self.canBack = true
-                        self.dismiss()
-                    case .Failure(let error):
-                        Alerts.handleError(error)
-                    }
-            })
-        }
-    }
-
+    var viewModel: MemoViewModel!
+    private var canBack: Bool = true
+    private let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = self.memo == nil ? "Create" : "Edit"
-
-        self.titleTextField.delegate = self
-        self.nameTextField.delegate = self
-        self.bodyTextView.delegate = self
-
-        if let memo = self.memo {
-            // Update content
-            self.titleTextField.text = memo.title
-            self.bodyTextView.text = memo.body
-        }
-        self.nameTextField.text = ""
+        self.title = viewModel.isNew ? "Create" : "Edit"
+        
+        // Bind Title
+        viewModel.title.asObservable().bindTo(titleTextField.rx_text).addDisposableTo(disposeBag)
+        self.titleTextField.rx_text.subscribeNext { (text) in
+            self.viewModel.title.value = text
+            }.addDisposableTo(self.disposeBag)
+        
+        // Bind name
+        viewModel.name.asObservable().bindTo(nameTextField.rx_text).addDisposableTo(disposeBag)
+        self.nameTextField.rx_text.subscribeNext { (text) in
+            self.viewModel.name.value = text
+            }.addDisposableTo(self.disposeBag)
+        
+        // Bind body
+        viewModel.body.asObservable().bindTo(bodyTextView.rx_text).addDisposableTo(disposeBag)
+        self.bodyTextView.rx_text.subscribeNext { (text) in
+            if text != (self.viewModel.original?.body ?? "") {
+                self.canBack = false
+            }
+            self.viewModel.body.value = text
+            }.addDisposableTo(self.disposeBag)
+        
+        // Bind Done button
+        self.doneButton
+            .rx_tap.subscribeNext { _ in
+                let memo = self.viewModel.memo()
+                if self.viewModel.isNew {
+                    // Create
+                    API.createMemo(
+                        title: memo.title,
+                        body: memo.body,
+                        author: memo.author)
+                        .subscribe(
+                            onNext: { (memo) in
+                                Alerts.success("Create succeeded: " + memo.title)
+                                self.canBack = true
+                                self.dismiss()
+                            },
+                            onError: { (error) in
+                                Alerts.handleError(error)
+                            },
+                            onCompleted: nil,
+                            onDisposed: nil)
+                        .addDisposableTo(self.disposeBag)
+                } else {
+                    // Update
+                    API.updateMemo(memo: memo)
+                        .subscribe(
+                            onNext: { (memo) in
+                                Alerts.success("Update successded: " + memo.title)
+                                self.canBack = true
+                                self.dismiss()
+                            },
+                            onError: { (error) in
+                                Alerts.handleError(error)
+                            },
+                            onCompleted: nil,
+                            onDisposed: nil)
+                        .addDisposableTo(self.disposeBag)
+                }
+            }
+            .addDisposableTo(self.disposeBag)
         
         // To Close keyboard
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MemoDetailViewController.closeKeyboard)))
+        let tapGesutre = UITapGestureRecognizer()
+        tapGesutre
+            .rx_event.subscribeNext { _ in
+                self.closeKeyboard()
+            }
+            .addDisposableTo(self.disposeBag)
+        self.view.addGestureRecognizer(tapGesutre)
         
         // To confirm that content will be clear
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(MemoDetailViewController.dismiss))
+        let barButton = UIBarButtonItem()
+        barButton.title = "Back"
+        barButton.style = .Plain
+        barButton.rx_tap
+            .subscribeNext { _ in
+                self.dismiss()
+            }
+            .addDisposableTo(self.disposeBag)
+        self.navigationItem.leftBarButtonItem = barButton
+        
+        // Textfield delegate
+        Observable
+            .combineLatest(
+                self.titleTextField.rx_controlEvent(.EditingDidEndOnExit),
+                self.nameTextField.rx_controlEvent(.EditingDidEndOnExit)
+            ) { _ in }
+            .subscribeNext { () in
+                self.closeKeyboard()
+            }
+            .addDisposableTo(self.disposeBag)
+        
+        Observable
+            .combineLatest(
+                self.titleTextField.rx_controlEvent(.EditingDidBegin),
+                self.nameTextField.rx_controlEvent(.EditingDidBegin)
+            ) { _ in }
+            .subscribeNext { () in
+                self.canBack = false
+            }
+            .addDisposableTo(self.disposeBag)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -99,22 +183,5 @@ class MemoDetailViewController: UIViewController {
         self.titleTextField.resignFirstResponder()
         self.nameTextField.resignFirstResponder()
         self.bodyTextView.resignFirstResponder()
-    }
-}
-
-extension MemoDetailViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        self.closeKeyboard()
-        return true
-    }
-    
-    func textFieldDidBeginEditing(textField: UITextField) {
-        self.canBack = false
-    }
-}
-
-extension MemoDetailViewController: UITextViewDelegate {
-    func textViewDidChange(textView: UITextView) {
-        self.canBack = false
     }
 }

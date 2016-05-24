@@ -4,16 +4,23 @@ PODS:
     - Result (~> 2.0.0)
   - Himotoki (2.0.1)
   - Result (2.0.0)
+  - RxCocoa (2.5.0):
+    - RxSwift (~> 2.5)
+  - RxSwift (2.5.0)
 
 DEPENDENCIES:
   - AlertBar
   - APIKit
   - Himotoki
+  - RxCocoa
+  - RxSwift
 
 SPEC CHECKSUMS:
   AlertBar: ea0d02bd415d71171872bc378ed3470efb2cefd3
   APIKit: 60e8478f80e8f0c5f7c52bcb1511a4444f758f64
   Himotoki: 21fa47e457cc7da39996fe7825a0e97b00344cf1
   Result: 9e75e1111c774c6ac594e14907b15057053a7959
+  RxCocoa: e1b1562e57a554d0fb2aabf9d71b637f177257c7
+  RxSwift: 402b41a50e922a0368fc14cb3bc9f4427920e8ae
 
 COCOAPODS: 0.39.0

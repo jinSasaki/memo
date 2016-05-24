@@ -9,6 +9,7 @@
 import Foundation
 import APIKit
 import Result
+import RxSwift
 
 extension API {
     struct DeleteMemoRequest: MemoRequestType {
@@ -29,8 +30,8 @@ extension API {
         
     }
     
-    static func deleteMemo(memoId memoId: String, handler: (Result<EmptyResponse, SessionTaskError>) -> Void) {
+    static func deleteMemo(memoId memoId: String) -> Observable<EmptyResponse> {
         let request = API.DeleteMemoRequest(memoId: memoId)
-        Session.sendRequest(request, handler: handler)
+        return Session.rx_response(request)
     }
 }
