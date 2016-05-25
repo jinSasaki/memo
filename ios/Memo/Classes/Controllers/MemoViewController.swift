@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ReSwift
 
 class MemoViewController: UIViewController {
     
@@ -27,27 +28,18 @@ class MemoViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.loadMemo()
+        store.subscribe(self)
+        if store.state.list.fetchStatus != .Fetching {
+            store.dispatch(MemoListState.fetchMemo())
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
+        store.unsubscribe(self)
+
         self.tableView.editing = false
-    }
-    
-    private func loadMemo() {
-        API.getMemos { result in
-            switch result {
-            case .Success(let memos):
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.memos = memos.memos
-                    self.tableView.reloadData()
-                })
-            case .Failure(let error):
-                Alerts.handleError(error)
-            }
-        }
     }
     
     @IBAction func didTapAddButton(sender: AnyObject) {
@@ -65,6 +57,21 @@ class MemoViewController: UIViewController {
             vc.modalTransitionStyle = .CoverVertical
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+}
+
+extension MemoViewController: StoreSubscriber {
+    func newState(state: AppState) {
+
+        self.memos = state.list.memos
+        
+        if let error = state.list.error {
+            Alerts.handleError(error)
+        }
+        if let message = state.list.alertMessage {
+            Alerts.success(message)
+        }
+        tableView.reloadData()
     }
 }
 
@@ -95,16 +102,7 @@ extension MemoViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         switch editingStyle {
         case .Delete:
-            // TODO: Delete
-            API.deleteMemo(memoId: self.memos[indexPath.row].id, handler: { (result) in
-                switch result {
-                case .Success(_):
-                    Alerts.success("success delete.")
-                    self.loadMemo()
-                case .Failure(let error):
-                    Alerts.handleError(error)
-                }
-            })
+            store.dispatch(MemoListState.deleteMemo(self.memos[indexPath.row].id))
         default: break
         }
     }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ReSwift
 
 class MemoDetailViewController: UIViewController {
     
@@ -15,40 +16,23 @@ class MemoDetailViewController: UIViewController {
     @IBOutlet weak var bodyTextView: UITextView!
     
     var memo: Memo?
-    private var canBack: Bool = true
-    
+
     @IBAction func didTapDoneButton(sender: AnyObject) {
         if var memo = self.memo {
             // Update
             memo.title = self.titleTextField.text ?? memo.title
             memo.body = self.bodyTextView.text
             memo.editor = self.nameTextField.text ?? memo.editor
-            API.updateMemo(memo: memo, handler: { (result) in
-                switch result {
-                case .Success(let memo):
-                    Alerts.success("Update succeeded: " + memo.title)
-                    self.canBack = true
-                    self.dismiss()
-                case .Failure(let error):
-                    Alerts.handleError(error)
-                }
-            })
+            store.dispatch(MemoDetailState.updateMemo(memo))
         } else {
             // Create
-            API.createMemo(
-                title: self.titleTextField.text ?? "",
-                body: self.bodyTextView.text,
-                author: self.nameTextField.text ?? "",
-                handler: { (result) in
-                    switch result {
-                    case .Success(let memo):
-                        Alerts.success("Create succeeded: " + memo.title)
-                        self.canBack = true
-                        self.dismiss()
-                    case .Failure(let error):
-                        Alerts.handleError(error)
-                    }
-            })
+            store.dispatch(
+                MemoDetailState.createMemo(
+                    title: self.titleTextField.text ?? "",
+                    body: self.bodyTextView.text,
+                    author: self.nameTextField.text ?? ""
+                )
+            )
         }
     }
 
@@ -75,15 +59,22 @@ class MemoDetailViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(MemoDetailViewController.dismiss))
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        store.subscribe(self)
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
+        store.unsubscribe(self)
         self.closeKeyboard()
     }
     
     @objc private func dismiss() {
         self.closeKeyboard()
-        if self.canBack {
+        if store.state?.detail.canDismiss ?? true {
             self.navigationController?.popViewControllerAnimated(true)
         } else {
             let alertController = UIAlertController(title: "Memo is edited.", message: "If back to list, current memo will be clear. You want to back?", preferredStyle: UIAlertControllerStyle.Alert)
@@ -102,6 +93,21 @@ class MemoDetailViewController: UIViewController {
     }
 }
 
+extension MemoDetailViewController: StoreSubscriber {
+    func newState(state: AppState) {
+        
+        self.memo = state.detail.memo
+        
+        if let error = state.detail.error {
+            Alerts.handleError(error)
+        }
+        if let message = state.detail.alertMessage {
+            Alerts.success(message)
+            self.dismiss()
+        }
+    }
+}
+
 extension MemoDetailViewController: UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         self.closeKeyboard()
@@ -109,12 +115,12 @@ extension MemoDetailViewController: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
-        self.canBack = false
+        store.dispatch(MemoDetailState.changeCanDismiss(false))
     }
 }
 
 extension MemoDetailViewController: UITextViewDelegate {
     func textViewDidChange(textView: UITextView) {
-        self.canBack = false
+        store.dispatch(MemoDetailState.changeCanDismiss(false))
     }
 }
