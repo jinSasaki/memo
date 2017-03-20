@@ -12,7 +12,7 @@ class MemoViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    private var memos: [Memo] = []
+    fileprivate var memos: [Memo] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,84 +24,84 @@ class MemoViewController: UIViewController {
         self.tableView.tableFooterView = UIView()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.loadMemo()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        self.tableView.editing = false
+        self.tableView.isEditing = false
     }
     
-    private func loadMemo() {
+    fileprivate func loadMemo() {
         API.getMemos { result in
             switch result {
-            case .Success(let memos):
-                dispatch_async(dispatch_get_main_queue(), {
+            case .success(let memos):
+                DispatchQueue.main.async {
                     self.memos = memos.memos
                     self.tableView.reloadData()
-                })
-            case .Failure(let error):
+                }
+            case .failure(let error):
                 Alerts.handleError(error)
             }
         }
     }
     
-    @IBAction func didTapAddButton(sender: AnyObject) {
+    @IBAction func didTapAddButton(_ sender: AnyObject) {
         self.navigateToDetail()
     }
     
-    @IBAction func didTapEditButton(sender: AnyObject) {
-        self.tableView.setEditing(!self.tableView.editing, animated: true)
+    @IBAction func didTapEditButton(_ sender: AnyObject) {
+        self.tableView.setEditing(!self.tableView.isEditing, animated: true)
     }
     
-    private func navigateToDetail(memo: Memo? = nil) {
+    fileprivate func navigateToDetail(_ memo: Memo? = nil) {
         let storyboard = UIStoryboard(name: "MemoDetailViewController", bundle: nil)
         if let vc = storyboard.instantiateInitialViewController() as? MemoDetailViewController {
             vc.memo = memo
-            vc.modalTransitionStyle = .CoverVertical
+            vc.modalTransitionStyle = .coverVertical
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 }
 
 extension MemoViewController: UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.memos.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         let memo = self.memos[indexPath.row]
         cell.textLabel?.text = memo.title
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd HH:mm:ss"
-        let dateString = dateFormatter.stringFromDate(NSDate(timeIntervalSince1970: Double(memo.updated)))
+        let dateString = dateFormatter.string(from: Date(timeIntervalSince1970: Double(memo.updated)))
         cell.detailTextLabel?.text = "Last edited at \(dateString) by \(memo.editor)"
         return cell
     }
     
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
-    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return false
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
-        case .Delete:
+        case .delete:
             // TODO: Delete
             API.deleteMemo(memoId: self.memos[indexPath.row].id, handler: { (result) in
                 switch result {
-                case .Success(_):
+                case .success(_):
                     Alerts.success("success delete.")
                     self.loadMemo()
-                case .Failure(let error):
+                case .failure(let error):
                     Alerts.handleError(error)
                 }
             })
@@ -111,8 +111,8 @@ extension MemoViewController: UITableViewDataSource {
 }
 
 extension MemoViewController: UITableViewDelegate {
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         self.navigateToDetail(self.memos[indexPath.row])
     }
 }

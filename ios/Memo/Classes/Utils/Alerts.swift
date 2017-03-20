@@ -11,17 +11,10 @@ import AlertBar
 import APIKit
 
 class Alerts {
-    class func handleError(error: ErrorType) {
-        switch error {
-        case let error as NSError:
-            AlertBar.showError(error)
-        case let error as APIError:
-            AlertBar.show(.Error, message: "\(error)")
-        default:
-            print(error)
-        }
+    class func handleError(_ error: Error) {
+        AlertBar.show(error: error)
     }
-    class func success(message: String) {
-        AlertBar.show(.Success, message: message)
+    class func success(_ message: String) {
+        AlertBar.show(.success, message: message)
     }
 }

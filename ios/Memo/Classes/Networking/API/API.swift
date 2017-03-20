@@ -9,5 +9,4 @@
 import Foundation
 import APIKit
 
-typealias APIError = APIKit.APIError
 final class API {}

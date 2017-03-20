@@ -11,11 +11,11 @@ import APIKit
 import Result
 
 extension API {
-    struct GetMemosRequest: MemoRequestType {
+    struct GetMemosRequest: MemoRequest {
         typealias Response = Memos
         
         var method: HTTPMethod {
-            return .GET
+            return .get
         }
         
         var path: String {
@@ -23,8 +23,8 @@ extension API {
         }
     }
     
-    static func getMemos(handler handler: (Result<Memos, APIError>) -> Void) {
+    static func getMemos(handler: @escaping (Result<Memos, SessionTaskError>) -> Void) {
         let request = API.GetMemosRequest()
-        Session.sendRequest(request, handler: handler)
+        Session.send(request, handler: handler)
     }
 }

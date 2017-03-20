@@ -14,7 +14,7 @@ struct EmptyResponse {
 }
 
 extension EmptyResponse: Decodable {
-    static func decode(e: Extractor) throws -> EmptyResponse {
+    static func decode(_ e: Extractor) throws -> EmptyResponse {
         return EmptyResponse()
     }
 }

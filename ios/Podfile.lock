@@ -1,9 +1,9 @@
 PODS:
-  - AlertBar (0.1.2)
-  - APIKit (1.3.0):
-    - Result (~> 2.0.0)
-  - Himotoki (2.0.0)
-  - Result (2.0.0)
+  - AlertBar (0.3.1)
+  - APIKit (3.1.1):
+    - Result (~> 3.0)
+  - Himotoki (3.0.1)
+  - Result (3.2.1)
 
 DEPENDENCIES:
   - AlertBar
@@ -11,9 +11,11 @@ DEPENDENCIES:
   - Himotoki
 
 SPEC CHECKSUMS:
-  AlertBar: 2d3a3533abdd1e3f66fbf291cb65a31a6d96c64d
-  APIKit: 14c0233ad090ae2dcfc9f642bc8158ff7ad50a4b
-  Himotoki: 77fb61dbd6cd5dae033af630b591fec383eece28
-  Result: 9e75e1111c774c6ac594e14907b15057053a7959
+  AlertBar: 645c5df4afe51b6c2abd5702bd58af27463834b6
+  APIKit: 7460983f490d3bde6aaaaa4164d18c9865a6f91d
+  Himotoki: 85fda41d4d0e14f7228317a3b474175cdfb8f515
+  Result: 2453a22e5c5b11c0c3a478736e82cd02f763b781
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 90e1e21daa12d9fde91b2e390b9fae0079adba05
+
+COCOAPODS: 1.2.0

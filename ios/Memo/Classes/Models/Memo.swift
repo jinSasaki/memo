@@ -20,7 +20,7 @@ struct Memo {
 }
 
 extension Memo: Decodable {
-    static func decode(e: Extractor) throws -> Memo {
+    static func decode(_ e: Extractor) throws -> Memo {
         return try Memo(
             id: e <| "id",
             title: e <| "title",

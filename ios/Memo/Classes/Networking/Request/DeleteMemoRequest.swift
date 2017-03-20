@@ -11,12 +11,13 @@ import APIKit
 import Result
 
 extension API {
-    struct DeleteMemoRequest: MemoRequestType {
+    struct DeleteMemoRequest: MemoRequest {
+
         typealias Response = EmptyResponse
         var memoId: String
         
         var method: HTTPMethod {
-            return .DELETE
+            return .delete
         }
         
         var path: String {
@@ -29,8 +30,8 @@ extension API {
         
     }
     
-    static func deleteMemo(memoId memoId: String, handler: (Result<EmptyResponse, APIError>) -> Void) {
+    static func deleteMemo(memoId: String, handler: @escaping (Result<EmptyResponse, SessionTaskError>) -> Void) {
         let request = API.DeleteMemoRequest(memoId: memoId)
-        Session.sendRequest(request, handler: handler)
+        Session.send(request, handler: handler)
     }
 }

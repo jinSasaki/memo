@@ -15,9 +15,9 @@ class MemoDetailViewController: UIViewController {
     @IBOutlet weak var bodyTextView: UITextView!
     
     var memo: Memo?
-    private var canBack: Bool = true
+    fileprivate var canBack: Bool = true
     
-    @IBAction func didTapDoneButton(sender: AnyObject) {
+    @IBAction func didTapDoneButton(_ sender: AnyObject) {
         if var memo = self.memo {
             // Update
             memo.title = self.titleTextField.text ?? memo.title
@@ -25,11 +25,11 @@ class MemoDetailViewController: UIViewController {
             memo.editor = self.nameTextField.text ?? memo.editor
             API.updateMemo(memo: memo, handler: { (result) in
                 switch result {
-                case .Success(let memo):
+                case .success(let memo):
                     Alerts.success("Update succeeded: " + memo.title)
                     self.canBack = true
-                    self.dismiss()
-                case .Failure(let error):
+                    self.dismissViewController()
+                case .failure(let error):
                     Alerts.handleError(error)
                 }
             })
@@ -41,11 +41,11 @@ class MemoDetailViewController: UIViewController {
                 author: self.nameTextField.text ?? "",
                 handler: { (result) in
                     switch result {
-                    case .Success(let memo):
+                    case .success(let memo):
                         Alerts.success("Create succeeded: " + memo.title)
                         self.canBack = true
-                        self.dismiss()
-                    case .Failure(let error):
+                        self.dismissViewController()
+                    case .failure(let error):
                         Alerts.handleError(error)
                     }
             })
@@ -72,30 +72,30 @@ class MemoDetailViewController: UIViewController {
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MemoDetailViewController.closeKeyboard)))
         
         // To confirm that content will be clear
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(MemoDetailViewController.dismiss))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(dismissViewController))
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         self.closeKeyboard()
     }
     
-    @objc private func dismiss() {
+    dynamic private func dismissViewController() {
         self.closeKeyboard()
         if self.canBack {
-            self.navigationController?.popViewControllerAnimated(true)
+            _ = self.navigationController?.popViewController(animated: true)
         } else {
-            let alertController = UIAlertController(title: "Memo is edited.", message: "If back to list, current memo will be clear. You want to back?", preferredStyle: UIAlertControllerStyle.Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action) in
-                self.navigationController?.popViewControllerAnimated(true)
+            let alertController = UIAlertController(title: "Memo is edited.", message: "If back to list, current memo will be clear. You want to back?", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action) in
+                _ = self.navigationController?.popViewController(animated: true)
             }))
-            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
-            self.presentViewController(alertController, animated: true, completion: nil)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
-    @objc private func closeKeyboard() {
+    @objc fileprivate func closeKeyboard() {
         self.titleTextField.resignFirstResponder()
         self.nameTextField.resignFirstResponder()
         self.bodyTextView.resignFirstResponder()
@@ -103,18 +103,18 @@ class MemoDetailViewController: UIViewController {
 }
 
 extension MemoDetailViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.closeKeyboard()
         return true
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         self.canBack = false
     }
 }
 
 extension MemoDetailViewController: UITextViewDelegate {
-    func textViewDidChange(textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         self.canBack = false
     }
 }
