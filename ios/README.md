@@ -2,9 +2,9 @@
 Memo sample on iOS.
 
 ## Requirement
-- Xcode 7.3
-- Swift 2.2
-- CocoaPods 0.39.x
+- Xcode 8.2.1
+- Swift 3+
+- CocoaPods 1.2.0
 
 ## Setup
 ```sh

@@ -10,12 +10,12 @@ import Foundation
 import APIKit
 import Himotoki
 
-protocol MemoRequestType: RequestType {
+protocol MemoRequest: Request {
 }
 
-extension MemoRequestType {
-    var baseURL: NSURL {
-        return NSURL(string: "http://127.0.0.1:3000/api/v1")!
+extension MemoRequest {
+    var baseURL: URL {
+        return URL(string: "http://127.0.0.1:3000/api/v1")!
     }
     
     var path: String {
@@ -31,8 +31,8 @@ extension MemoRequestType {
     }
 }
 
-extension MemoRequestType where Response: Decodable {
-    func responseFromObject(object: AnyObject, URLResponse: NSHTTPURLResponse) throws -> Self.Response {
+extension MemoRequest where Response: Decodable {
+    func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Self.Response {
         return try decodeValue(object)
     }
 }

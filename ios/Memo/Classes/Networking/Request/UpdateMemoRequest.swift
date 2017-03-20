@@ -11,12 +11,12 @@ import APIKit
 import Result
 
 extension API {
-    struct UpdateMemoRequest: MemoRequestType {
+    struct UpdateMemoRequest: MemoRequest {
         typealias Response = Memo
         var memo: Memo
         
         var method: HTTPMethod {
-            return .PUT
+            return .put
         }
         
         var path: String {
@@ -25,9 +25,9 @@ extension API {
         
         var parameters: [String : AnyObject] {
             return [
-                "title": self.memo.title,
-                "body": self.memo.body,
-                "editor": self.memo.editor
+                "title": self.memo.title as AnyObject,
+                "body": self.memo.body as AnyObject,
+                "editor": self.memo.editor as AnyObject
             ]
         }
         
@@ -36,9 +36,9 @@ extension API {
         }
     }
     
-    static func updateMemo(memo memo: Memo, handler: (Result<Memo, SessionTaskError>) -> Void) {
+    static func updateMemo(memo: Memo, handler: @escaping (Result<Memo, SessionTaskError>) -> Void) {
         let request = API.UpdateMemoRequest(memo: memo)
-        Session.sendRequest(request, handler: handler)
+        Session.send(request, handler: handler)
     }
 
 }

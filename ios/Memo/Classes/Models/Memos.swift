@@ -14,7 +14,7 @@ struct Memos {
 }
 
 extension Memos: Decodable {
-    static func decode(e: Extractor) throws -> Memos {
+    static func decode(_ e: Extractor) throws -> Memos {
         return try Memos(
             memos: e <|| "memos"
         )
